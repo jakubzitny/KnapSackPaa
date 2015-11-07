@@ -34,7 +34,7 @@ object Solvers {
    * @see greedySolver
    */
   def sortedValuesGreedySolver(stuff: List[Thing], capacity: Integer): KnapSack = {
-    greedySolver(stuff.sortBy(thing => thing.value), capacity)
+    greedySolver(stuff.sortBy(_.value), capacity)
   }
 
   /**
@@ -43,7 +43,7 @@ object Solvers {
    * @see greedySolver
    */
   def sortedWeightsGreedySolver(stuff: List[Thing], capacity: Integer): KnapSack = {
-    greedySolver(stuff.sortBy(thing => thing.weight), capacity)
+    greedySolver(stuff.sortBy(_.weight), capacity)
   }
 
   /**
@@ -52,7 +52,7 @@ object Solvers {
    * @see greedySolver
    */
   def sortedValueWeightsRatioGreedySolver(stuff: List[Thing], capacity: Integer): KnapSack = {
-    greedySolver(stuff.sortBy(thing => thing.valueWeightRatio), capacity)
+    greedySolver(stuff.sortBy(_.valueWeightRatio), capacity)
   }
 
 }

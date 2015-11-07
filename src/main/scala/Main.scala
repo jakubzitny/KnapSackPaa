@@ -1,5 +1,7 @@
 import java.nio.file.{Paths, Files}
 import scala.io.Source
+import scala.io.StdIn._
+import util.Timer
 
 /**
  * KnapSack problem PAA
@@ -9,6 +11,9 @@ import scala.io.Source
  */
 object Main {
 
+  val DEBUG_INIT = false
+  val DEBUG_ONE = false
+
   /**
    * dispatch processing of given file
    * - load data
@@ -17,13 +22,26 @@ object Main {
    * @param inputFile String of the path to input file.
    */
   def processFile(inputFile: String) = {
+    var times = List[Double]()
     for (line <- Source.fromFile(inputFile).getLines()) {
       val lineData = line.split(" ")
       val instance = new KnapSackProblem(lineData(0).toInt, lineData(1).toInt, lineData(2).toInt)
       instance.loadThings(lineData.slice(3, lineData.length))
-      //instance.findSolution(Solvers.sortedValueWeightsRatioGreedySolver)
-      instance.findSolution(Solvers.greedySolver)
-      //System.exit(0) // one is enough for now
+
+      val resultTuple = Timer.meausreDuration {
+        instance.findSolution(Solvers.greedySolver)
+      }("findSolution")
+      times = times :+ resultTuple._2
+      if (DEBUG_ONE) System.exit(0) // one is enough for now
+    }
+    println("Average time for instance (" + inputFile + "): " + times.sum / times.length)
+  }
+
+  def manualInit() = {
+    if (DEBUG_INIT) {
+      print("press ENTER to start")
+      readLine()
+      println("started..")
     }
   }
 
@@ -33,11 +51,14 @@ object Main {
    * @param args Array of CLI args
    */
   def main(args: Array[String]): Unit = {
+    manualInit()
     if (args.length == 0) System.exit(1)
 
     for (arg <- args) {
       if (!Files.exists(Paths.get(arg))) System.exit(2)
-      processFile(arg)
+      Timer.meausreDuration{
+        processFile(arg)
+      }("processFile")
     }
   }
 }

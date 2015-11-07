@@ -10,10 +10,17 @@ case class KnapSackProblem (instanceId: Integer, thingCount: Integer, capacity: 
     }
   }
 
+  def printStuff(stuff: List[Thing]) = {
+    for (thing <- stuff) {
+      println(thing.value, thing.weight)
+    }
+    println("...")
+  }
+
   /**
    * Dispatcher for finding solutions with given solver
    *
-   * @param solver Function taking parsed input and returning best solution
+   * @param solver Function taking parsed input and returning a solution
    */
   def findSolution(solver: (List[Thing], Integer) => KnapSack) = {
     val foundSolution = solver(stuff, capacity)
