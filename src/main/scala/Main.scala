@@ -11,8 +11,8 @@ import util.Timer
  */
 object Main {
 
-  val DEBUG_INIT = false
-  val DEBUG_ONE = false
+  val DebugInit = false
+  val DebugOne = false
 
   /**
    * dispatch processing of given file
@@ -23,22 +23,33 @@ object Main {
    */
   def processFile(inputFile: String) = {
     var times = List[Double]()
-    for (line <- Source.fromFile(inputFile).getLines()) {
-      val lineData = line.split(" ")
-      val instance = new KnapSackProblem(lineData(0).toInt, lineData(1).toInt, lineData(2).toInt)
+    var errors = List[Double]()
+    val solFile = inputFile.replace("inst", "sol")
+    val solFileIterator = Source.fromFile(solFile).getLines()
+    for (lineTuple <- Source.fromFile(inputFile).getLines() zip
+      Source.fromFile(solFile).getLines()) {
+      val lineData = lineTuple._1.split(" ")
+      val lineSolData = lineTuple._2.split(" ")
+      val instance = new KnapSackProblem(lineData(0).toInt, lineData(1).toInt,
+        lineData(2).toInt, lineSolData(2).toInt)
       instance.loadThings(lineData.slice(3, lineData.length))
 
-      val resultTuple = Timer.meausreDuration {
+      val resultTuple = Timer.measureDuration {
         instance.findSolution(Solvers.greedySolver)
       }("findSolution")
       times = times :+ resultTuple._2
-      if (DEBUG_ONE) System.exit(0) // one is enough for now
+      errors = errors :+ instance.calcError()
+      if (DebugOne) System.exit(0) // one is enough for now
     }
-    println("Average time for instance (" + inputFile + "): " + times.sum / times.length)
+
+    println(f"($inputFile) Average time: ${times.sum / times.length}%2.2f")
+    println(f"($inputFile) Average error: ${errors.sum / errors.length}%2.4f")
+    println(f"($inputFile) Max error: ${errors.max}%2.4f")
+
   }
 
   def manualInit() = {
-    if (DEBUG_INIT) {
+    if (DebugInit) {
       print("press ENTER to start")
       readLine()
       println("started..")
@@ -56,7 +67,7 @@ object Main {
 
     for (arg <- args) {
       if (!Files.exists(Paths.get(arg))) System.exit(2)
-      Timer.meausreDuration{
+      Timer.measureDuration{
         processFile(arg)
       }("processFile")
     }

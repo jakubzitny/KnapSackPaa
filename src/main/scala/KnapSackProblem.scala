@@ -1,7 +1,9 @@
 import model.{Thing, KnapSack}
 
-case class KnapSackProblem (instanceId: Integer, thingCount: Integer, capacity: Integer) {
+case class KnapSackProblem (instanceId: Integer = 0, thingCount: Int,
+                            capacity: Integer, idealSolutionValue: Int ) {
 
+  var foundSolution: Option[KnapSack] = None
   var stuff = List[Thing]()
 
   def loadThings(thingData: Array[String]) = {
@@ -23,10 +25,13 @@ case class KnapSackProblem (instanceId: Integer, thingCount: Integer, capacity: 
    * @param solver Function taking parsed input and returning a solution
    */
   def findSolution(solver: (List[Thing], Integer) => KnapSack) = {
-    val foundSolution = solver(stuff, capacity)
-    println(instanceId + " " + thingCount + " " + foundSolution.getTotalValue
-      + "  " + stuff.map(x => if (foundSolution.stuff.contains(x)) 1 else 0).mkString(" "))
+    foundSolution = Option(solver(stuff, capacity))
+    println(instanceId + " " + thingCount + " " + foundSolution.get.getTotalValue
+      + "  " + stuff.map(x => if (foundSolution.get.stuff.contains(x)) 1 else 0).mkString(" "))
+    foundSolution
   }
 
-}
+  def calcError(): Double =
+    (idealSolutionValue.toDouble - foundSolution.get.getTotalValue) / idealSolutionValue
 
+}

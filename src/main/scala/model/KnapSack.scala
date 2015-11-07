@@ -25,9 +25,8 @@ case class KnapSack (stuff: List[Thing]) {
 }
 
 object KnapSack {
-  def createEmpty(): KnapSack = {
-    new KnapSack(List())
-  }
+
+  def createEmpty(): KnapSack = new KnapSack(List())
 
   def createFromBinary(x: Int, stuff: List[Thing]): KnapSack = {
     val binaryRep =  "0" * (stuff.length - x.toBinaryString.length) + x.toBinaryString
