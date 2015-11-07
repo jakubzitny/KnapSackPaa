@@ -1,5 +1,7 @@
 import model.{Thing, KnapSack}
 
+import scala.annotation.tailrec
+
 /**
  * available solver functions taking parsed input data and returning best solution found
  *
@@ -29,30 +31,45 @@ object Solvers {
   }
 
   /**
-   * The greedy solver with presorted things by values.
+   * TODO
    *
-   * @see greedySolver
+   * @param stuff List of things to be loaded into the bag, already sorted
+   * @param capacity Integer max capacity of the bag
+   * @return KnapSack found solution
    */
-  def sortedValuesGreedySolver(stuff: List[Thing], capacity: Integer): KnapSack = {
-    greedySolver(stuff.sortBy(_.value), capacity)
+  def dummyHeuristicSolver(stuff: List[Thing], capacity: Integer): KnapSack = {
+    @tailrec
+    def fillKnapSack(knapSack: KnapSack, stuff: List[Thing]): KnapSack =
+      knapSack.getTotalWeight match {
+        case empty if stuff.isEmpty => knapSack
+        case totalWeight if totalWeight + stuff.head.weight >= capacity => knapSack
+        case _ => fillKnapSack(knapSack.addThing(stuff.head), stuff.tail)
+      }
+    fillKnapSack(KnapSack.createEmpty(), stuff)
   }
 
   /**
-   * The greedy solver with presorted things by weights.s
+   * The dummy heuristic with presorted things by value, descending.
    *
-   * @see greedySolver
+   * @see dummyHeuristic
    */
-  def sortedWeightsGreedySolver(stuff: List[Thing], capacity: Integer): KnapSack = {
-    greedySolver(stuff.sortBy(_.weight), capacity)
-  }
+  def sortedValuesDummyHeuristicSolver(stuff: List[Thing], capacity: Integer): KnapSack =
+    dummyHeuristicSolver(stuff.sortBy(-_.value), capacity)
 
   /**
-   * The greedy solver with presorted things by the ratio of values to weights.
+   * The dummy heuristic with presorted things by weights, ascending.
    *
-   * @see greedySolver
+   * @see dummyHeuristic
    */
-  def sortedValueWeightsRatioGreedySolver(stuff: List[Thing], capacity: Integer): KnapSack = {
-    greedySolver(stuff.sortBy(_.valueWeightRatio), capacity)
-  }
+  def sortedWeightsDummyHeuristicSolver(stuff: List[Thing], capacity: Integer): KnapSack =
+    dummyHeuristicSolver(stuff.sortBy(_.weight), capacity)
+
+  /**
+   * The dummy heuristic with presorted things by the ratio of values to weights, descending.
+   *
+   * @see dummyHeuristic
+   */
+  def sortedValueWeightsDummyHeuristicSolver(stuff: List[Thing], capacity: Integer): KnapSack =
+    dummyHeuristicSolver(stuff.sortBy(-_.valueWeightRatio), capacity)
 
 }

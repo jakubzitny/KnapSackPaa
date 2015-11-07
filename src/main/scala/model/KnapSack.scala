@@ -4,6 +4,8 @@ import scala.annotation.tailrec
 
 case class KnapSack (stuff: List[Thing]) {
 
+  def addThing(thing: Thing) = copy(stuff :+ thing)
+
   def getTotalValue: Integer = {
     @tailrec
     def aggValue(stuff: List[Thing], acc: Integer = 0): Integer = stuff match {
